@@ -45,11 +45,11 @@ def model(inp, train=False):
     # Wire them into a convolutional neural net
     conv1 = tf.nn.conv2d(inp, conv1_weights, strides=[1,1,1,1], padding="SAME")
     relu1 = tf.nn.relu(tf.nn.bias_add(conv1, conv1_biases))
-    pool1 = tf.nn.max_pool2d(relu1, ksize=[1, 2, 2, 1], \
+    pool1 = tf.nn.max_pool(relu1, ksize=[1, 2, 2, 1], \
                            strides=[1, 2, 2, 1], padding="VALID")
     conv2 = tf.nn.conv2d(pool1, conv2_weights, strides=[1,1,1,1], padding="SAME")
     relu2 = tf.nn.relu(tf.nn.bias_add(conv2, conv2_biases))
-    pool2 = tf.nn.max_pool2d(relu2, ksize=[1, 2, 2, 1], \
+    pool2 = tf.nn.max_pool(relu2, ksize=[1, 2, 2, 1], \
                            strides=[1, 2, 2, 1], padding="VALID")
     size = pool2.get_shape().as_list()
     pool2_flat = tf.reshape(pool2, [size[0], size[1] * size[2] * size[3]])
