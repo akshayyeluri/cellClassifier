@@ -57,12 +57,12 @@ model = load_model("test_model.h5")
 loss, acc = model.evaluate(test_data, test_labels)
 print(f"Test loss: {loss}")
 print(f"Test accuracy: {acc}")
-
+```
     2000/2000 [==============================] - 0s 240us/step
     Test loss: 0.6971381943225861
     Test accuracy: 0.802
 
-
+```
 preds = model.predict(test_data)
 conf = utils.confusions(preds, test_labels)
 utils.plot_confusions(conf);
