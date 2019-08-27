@@ -5,7 +5,7 @@ We have here a deep-learning model to classify cells based on single cell RNA (s
 ## Overview of Files
 Keras_tests.ipynb is the important file, showing fetching / processing the data, how to compile a keras model for training, the training and evaluation of the model, and various other parts of the workflow (This will be modularized / cleaned up later).
 
-test_model.h5 is a saved keras model that performed well, getting about 82% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes
+test_model.h5 is a saved keras model that performed well, getting about 80% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes
 
 models.py is a module with functions for generating keras models with related / similar architectures.
 
@@ -51,19 +51,18 @@ _________________________________________________________________
 ---
 ## Performance Metrics
 Here we include an example of loading our model and evaluating a test set with it
-```python                                                                       
-from keras.models import load_model                                             
-model = load_model("test_model.h5")                                                                                                                                                                                         
-loss, acc = model.evaluate(test_data, test_labels)                              
-print(f"Test loss: {loss}")                                                     
-print(f"Test accuracy: {acc}")                                                  
-```                                                                             
-                                                                                
-    2000/2000 [==============================] - 0s 240us/step                  
-    Test loss: 0.6971381943225861                                               
+```python
+from keras.models import load_model
+model = load_model("test_model.h5")
+loss, acc = model.evaluate(test_data, test_labels)
+print(f"Test loss: {loss}")
+print(f"Test accuracy: {acc}")
+
+    2000/2000 [==============================] - 0s 240us/step
+    Test loss: 0.6971381943225861
     Test accuracy: 0.802
 
-```
+
 preds = model.predict(test_data)
 conf = utils.confusions(preds, test_labels)
 utils.plot_confusions(conf);
