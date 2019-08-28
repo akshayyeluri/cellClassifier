@@ -32,3 +32,37 @@ def plot_confusions(grid, ax = None):
                 plt.text(j-xoff, i+.2, int(count), fontsize=9, color='white')
 
     return ax
+
+def jensen_shannon(ps, weights=None):
+    if weights is None:
+        weights = np.full(len(ps), 1 / len(ps))
+    tot = np.max([len(p) for p in ps])
+    ps = np.array([np.concatenate((p, np.zeros(tot - p.shape[0]))) for p in ps])
+    ps = ps / np.sum(ps, axis=1)[:, None]
+    t1 = scipy.stats.entropy(np.sum(ps * weights[:, None], axis=0))
+    t2 = np.dot(weights, [scipy.stats.entropy(p) for p in ps])
+    return t1 - t2
+
+def gene_relevance_metric(gene_vals, labels):
+    counts = [gene_vals[labels == l] for l in np.unique(labels)]
+    distributions = [np.bincount(val) for val in counts]
+    return jensen_shannon(distributions)
+
+#%timeit gene_relevance_metric(data[:, 0].astype(int), labels.squeeze().astype(int))
+#
+#data_f = data.astype(int)
+#labels_f = labels.squeeze().astype(int)
+#gene_scores = np.array([gene_relevance_metric(data_f[:, i], labels_f) for i in tnrange(data_f.shape[1])])
+#
+#gene_scores
+#
+#inds = np.argsort(gene_scores)[::-1]
+#
+#data_shuffled = data[:, inds]
+#data_shuffled = np.log1p(data_shuffled)
+#
+## Visualize data with labels
+#labels_scaled = labels * (data_shuffled.max() - data_shuffled.min()) / labels.max() - data_shuffled.min()
+#plt.imshow(np.hstack((data_shuffled, np.repeat(labels_scaled, data.shape[1] //  10, axis=1))))
+#plt.xlabel("Gene index (Colorbar at end is label)")
+#plt.ylabel("Cell index");
