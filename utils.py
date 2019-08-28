@@ -52,13 +52,13 @@ def perf_metric(predictions, labels, metric='precision'):
     """
     conf = confusions(predictions, labels)
     if metric == 'precision':
-        return np.diag(confusions) / np.sum(confusions, axis=1)
+        return np.diag(conf) / np.sum(conf, axis=1)
     elif metric == 'recall':
-        return np.diag(confusions) / np.sum(confusions, axis=0)
+        return np.diag(conf) / np.sum(conf, axis=0)
     elif metric == 'accuracy':
-        return np.sum(np.diag(confusions)) / np.sum(confusions)
+        return np.sum(np.diag(conf)) / np.sum(conf)
     elif metric == 'error':
-        return 1 - (np.sum(np.diag(confusions)) / np.sum(confusions))
+        return 1 - (np.sum(np.diag(conf)) / np.sum(conf))
 
 def plot_confusions(grid, ax = None):
     """ Utility to neatly plot confusions matrix. """
