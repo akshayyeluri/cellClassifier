@@ -1,7 +1,12 @@
 import numpy as np
+import pickle
 import matplotlib.pyplot as plt
 import os
 import scipy.stats
+
+######################################################################
+# Data wrangling / processing 
+######################################################################
 
 def preprocess(data, colInds=None):
     """ 
@@ -24,6 +29,14 @@ def visualize_data(data, labels, ax=None, cbar_width=0.1):
     ax.set_xlabel('Gene index (colorbar at end is label)')
     ax.set_ylabel('Cell index')
     return ax
+
+
+
+
+
+######################################################################
+# Performance Metrics
+######################################################################
 
 def error_rate(predictions, labels):
     """Return the error rate (fraction of samples misclassified)"""
@@ -78,6 +91,14 @@ def plot_confusions(grid, ax = None):
 
     return ax
 
+
+
+
+
+######################################################################
+# Divergence calculation for sorting genes by how informative they are
+######################################################################
+
 def jensen_shannon(ps, weights=None):
     """ Given a list of probability distributions ps, this will calculate
     the jensen_shannon divergence a.k.a. the information radius, an extension
@@ -110,3 +131,22 @@ def gene_divergence(gene_vals, labels):
     return jensen_shannon(distributions)
 
 
+
+
+######################################################################
+# Random io garbage
+######################################################################
+
+def concat_accuracy_pkls(fName1, fName2, outFile=None):
+    "IO function to just conveniently concatenate accuracy pickles"
+    with open(fName1, "rb") as f:
+        (starts1, stops1, scores1) = pickle.load(f)
+    with open(fName2, "rb") as f:
+        (starts2, stops2, scores2) = pickle.load(f)
+    starts = np.concatenate((starts1, starts2))
+    stops = np.concatenate((stops1, stops2))
+    scores = np.concatenate((scores1, scores2))
+    if outFile is None:
+        outFile = fName1
+    with open(outFile, "wb") as f:
+        pickle.dump((starts, stops, scores), f)
