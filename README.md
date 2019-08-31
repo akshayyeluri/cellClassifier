@@ -66,7 +66,7 @@ preds = model.predict(test_data)
 conf = utils.confusions(preds, test_labels)
 utils.plot_confusions(conf);
 ```
-![percep_confusions](assets/confusions.svg)
+![percep_confusions](assets/confusions.png)
 
 ### Precision/Recall
 |Class 	|precision 	|recall  |
