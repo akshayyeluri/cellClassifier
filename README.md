@@ -67,7 +67,6 @@ conf = utils.confusions(preds, test_labels)
 utils.plot_confusions(conf);
 ```
 ![percep_confusions](assets/confusions.svg)
-<img src="assets/confusions.svg">
 
 ### Precision/Recall
 |Class 	|precision 	|recall  |
