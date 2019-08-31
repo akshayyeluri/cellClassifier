@@ -19,13 +19,13 @@ def preprocess(data, colInds=None):
     return np.log1p(data[:, colInds])
 
 
-def visualize_data(data, labels, ax=None, cbar_width=0.1):
+def visualize_data(data, labels, ax=None, cbar_width=0.1, aspect='auto'):
     """ Utility to neatly plot data matrix with labels """
     ax = plt.subplot(111) if ax is None else ax
     l_max, l_min, d_max, d_min = labels.max(), labels.min(), data.max(), data.min()
     labels = (labels - l_min) * (d_max - d_min) / (l_max - l_min) + d_min
     cbar = np.repeat(labels[:, None], int(data.shape[1] * cbar_width) , axis=1)
-    ax.imshow(np.hstack((data, cbar)))
+    ax.imshow(np.hstack((data, cbar)), aspect=aspect)
     ax.set_xlabel('Gene index (colorbar at end is label)')
     ax.set_ylabel('Cell index')
     return ax
