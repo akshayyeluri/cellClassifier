@@ -46,17 +46,26 @@ Trainable params: 3,104,266
 Non-trainable params: 0
 ```
 ## Performance Metrics
+Here we include an example of loading our model and evaluating a test set with it
 
 ### Loss / Accuracy
-```
-loss, acc = model.evaluate(test_data, test_labels, verbose=0)
+```python
+from keras.models import load_model
+model = load_model("multi_perceptron.h5")
+loss, acc = model.evaluate(test_data, test_labels, )
 print(f"Test loss: {loss}")
 print(f"Test accuracy: {acc}")
 ```
-Test loss: 0.6312016949653626
-Test accuracy: 0.8555
+Test loss: 0.6564117822647094
+Test accuracy: 0.844
 
 ### Confusions
+```
+preds = model.predict(test_data)
+conf = utils.confusions(preds, test_labels)
+utils.plot_confusions(conf);
+```
+![percep_confusions](assets/confusions.svg)
 
 ### Precision/Recall
 |Class 	|precision 	|recall  |
@@ -109,7 +118,7 @@ _________________________________________________________________
 
 ---
 ## Performance Metrics
-Here we include an example of loading our model and evaluating a test set with it
+
 ```python
 from keras.models import load_model
 model = load_model("test_model.h5")
@@ -127,6 +136,6 @@ conf = utils.confusions(preds, test_labels)
 utils.plot_confusions(conf);
 ```
 
-![test_confusions](assets/confusions.png)
+![cnn_confusions](assets/cnn_confusions.png)
 
 This was the original CNN model performance, but it is clear that the multilayer perceptron operating on a limited number of features performs better by far.
