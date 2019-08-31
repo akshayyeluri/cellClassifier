@@ -57,6 +57,7 @@ print(f"Test loss: {loss}")
 print(f"Test accuracy: {acc}")
 ```
 Test loss: 0.6564117822647094
+
 Test accuracy: 0.844
 
 ### Confusions
@@ -66,6 +67,7 @@ conf = utils.confusions(preds, test_labels)
 utils.plot_confusions(conf);
 ```
 ![percep_confusions](assets/confusions.svg)
+<img src="assets/confusions.svg">
 
 ### Precision/Recall
 |Class 	|precision 	|recall  |
