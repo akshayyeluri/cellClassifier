@@ -5,16 +5,84 @@ We have here a deep-learning model to classify cells based on single cell RNA (s
 ## Overview of Files
 Keras_tests.ipynb is the important file, showing fetching / processing the data, how to compile a keras model for training, the training and evaluation of the model, and various other parts of the workflow (This will be modularized / cleaned up later).
 
-test_model.h5 is a saved keras model that performed well, getting about 80% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes
+conv_net.h5 is a saved CNN keras model that performed well, getting about 80% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes. 
 
-models.py is a module with functions for generating keras models with related / similar architectures.
+multi_perceptron.h5 is a simpler, but more performant model that is just a simple feed-forward multi-layer perceptron. The important thing is that this model assumes the data has been preprocessed in a specific way (see feature subsampling section).
 
-utils.py is a module with some utilities I wrote ad-hoc in this workflow
+finding_relevant_genes.ipynb is a testing notebook where the point is to identify what features are necessary to get good performance by zeroing out certain features, retraining, and seeing the change in accuracy.
+
+make_models.py is a module with functions for generating keras models with related / similar architectures. This module makes hyperparameter optimization via grid-search convenient, since all desired hyperparameters for optimization can be passed as arguments to the functions in this module.
+
+utils.py is a module with some utilities I wrote ad-hoc in this workflow, the most important ones are the jensen_shannon and gene_divergence functions (more on those in the Feature subsampling section)/
 
 low_level_tf_implementation is a work in progress, but will soon be the same architecture, implemented in tensorflow for an increase in sustainability / speed
 
+assets is a folder with various images and data files for convenience. See Feature Subsampling for more.
+
 ---
-## Model summary
+
+# Feature subsampling via use of Jensen Shannon Divergence
+
+Jensen Shannon Divergence, or information radius, is an extension of KL divergence that is symmetric, and can also
+be extended to more than 2 distributions. The idea here is that the genes / features most diagnostic in classifying cells will likely be the genes where the distributions of counts within each cell class (so 1 distribution per class) diverge the most. Thus, we compute the divergence for each gene, and sort the genes by this metric. This has already been done, and we have a precomputed list of gene indices, sorted by their jensen shannon divergence, in assets/divergences.csv. We thus only take the top 1000 genes to use for classification. This reduction of number of features allows us to go from CNNs to a simple multi-layer perceptron model, and the performance actually drastically improves!
+
+## New Multi-layer perceptron summary
+```
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+flatten_1 (Flatten)          (None, 1000)              0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 2048)              2050048   
+_________________________________________________________________
+dense_2 (Dense)              (None, 512)               1049088   
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 512)               0         
+_________________________________________________________________
+dense_3 (Dense)              (None, 10)                5130      
+=================================================================
+Total params: 3,104,266
+Trainable params: 3,104,266
+Non-trainable params: 0
+```
+## Performance Metrics
+Here we include an example of loading our model and evaluating a test set with it
+
+### Loss / Accuracy
+```python
+from keras.models import load_model
+model = load_model("multi_perceptron.h5")
+loss, acc = model.evaluate(test_data, test_labels, )
+print(f"Test loss: {loss}")
+print(f"Test accuracy: {acc}")
+```
+Test loss: 0.6564117822647094
+Test accuracy: 0.844
+
+### Confusions
+```
+preds = model.predict(test_data)
+conf = utils.confusions(preds, test_labels)
+utils.plot_confusions(conf);
+```
+![percep_confusions](assets/confusions.svg)
+
+### Precision/Recall
+|Class 	|precision 	|recall  |
+|-------|-----------|--------|
+|0 	    |0.980198 	|1.000000|
+|1 	    |1.000000 	|0.995614|
+|2 	    |0.989130 	|0.978495|
+|3 	    |0.523333 	|0.758454|
+|4 	    |1.000000 	|0.979900|
+|5 	    |0.916667 	|0.810526|
+|6 	    |0.898148 	|0.955665|
+|7 	    |0.834197 	|0.856383|
+|8 	    |0.718615 	|0.809756|
+|9 	    |0.916667 	|0.392857|
+
+
+## Original CNN Model summary
 ```
 Layer (type)                 Output Shape              Param #   
 =================================================================
@@ -50,7 +118,7 @@ _________________________________________________________________
 
 ---
 ## Performance Metrics
-Here we include an example of loading our model and evaluating a test set with it
+
 ```python
 from keras.models import load_model
 model = load_model("test_model.h5")
@@ -68,4 +136,6 @@ conf = utils.confusions(preds, test_labels)
 utils.plot_confusions(conf);
 ```
 
-![test_confusions](assets/confusions.png)
+![cnn_confusions](assets/cnn_confusions.png)
+
+This was the original CNN model performance, but it is clear that the multilayer perceptron operating on a limited number of features performs better by far.
