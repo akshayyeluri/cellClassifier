@@ -140,3 +140,8 @@ utils.plot_confusions(conf);
 ![cnn_confusions](assets/cnn_confusions.png)
 
 This was the original CNN model performance, but it is clear that the multilayer perceptron operating on a limited number of features performs better by far.
+
+# TODO
+1. document make_models.py better
+2. Hyperparameter optimization for 2 hidden layer models
+3. Make use of correlation / mutual info to eliminate redundant genes
