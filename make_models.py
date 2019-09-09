@@ -49,7 +49,7 @@ def model_2_hidden_layer(n_feat, neurons_1, neurons_2, \
 
 
 
-def model_1d(n_feat, conv_channels, dense_neurons, n_class = 10, act='relu', \
+def model_cnn(n_feat, conv_channels, dense_neurons, n_class = 10, act='relu', \
                              pool_type='avg', conv_ks = None, \
                              pool_ks = None, pads = None, \
                              opt='adam', metrics=['accuracy'], \
