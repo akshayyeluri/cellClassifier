@@ -3,21 +3,21 @@ We have here a deep-learning model to classify cells based on single cell RNA (s
 
 ---
 ## Overview of Files
-workflow.ipynb is the important file, showing fetching / processing the data, how to compile a keras model for training, the training and evaluation of the model, and various other parts of the workflow (This will be modularized / cleaned up later).
+1. workflow.ipynb is the important file, showing fetching / processing the data, how to compile a keras model for training, the training and evaluation of the model, and various other parts of the workflow (This will be modularized / cleaned up later).
 
-conv_net.h5 is a saved CNN keras model that performed well, getting about 80% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes. 
+2. conv_net.h5 is a saved CNN keras model that performed well, getting about 80% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes. 
 
-multi_perceptron.h5 is a simpler, but more performant model that is just a simple feed-forward multi-layer perceptron. The important thing is that this model assumes the data has been preprocessed in a specific way (see feature subsampling section).
+3. multi_perceptron.h5 is a simpler, but more performant model that is just a simple feed-forward multi-layer perceptron. The important thing is that this model assumes the data has been preprocessed in a specific way (see feature subsampling section).
 
-finding_relevant_genes.ipynb is a testing notebook where the point is to identify what features are necessary to get good performance by zeroing out certain features, retraining, and seeing the change in accuracy. This also includes chunks of code that do useful things like calculate the mutual information with class labels / Jensen shannon divergence for each gene, or find the correlation matrix for genes.
+4. finding_relevant_genes.ipynb is a testing notebook where the point is to identify what features are necessary to get good performance by zeroing out certain features, retraining, and seeing the change in accuracy. This also includes chunks of code that do useful things like calculate the mutual information with class labels / Jensen shannon divergence for each gene, or find the correlation matrix for genes.
 
-make_models.py is a module with functions for generating keras models with related / similar architectures. This module makes hyperparameter optimization via grid-search convenient, since all desired hyperparameters for optimization can be passed as arguments to the functions in this module.
+5. make_models.py is a module with functions for generating keras models with related / similar architectures. This module makes hyperparameter optimization via grid-search convenient, since all desired hyperparameters for optimization can be passed as arguments to the functions in this module.
 
-utils.py is a module with some utilities I wrote ad-hoc in this workflow, the most important ones are the jensen_shannon and gene_divergence functions (more on those in the Feature subsampling section)/
+6. utils.py is a module with some utilities I wrote ad-hoc in this workflow, the most important ones are the jensen_shannon and gene_divergence functions (more on those in the Feature subsampling section)/
 
-low_level_tf_implementation is a work in progress, but will soon be the same architecture, implemented in tensorflow for an increase in sustainability / speed
+7. low_level_tf_implementation is a work in progress, but will soon be the same architecture, implemented in tensorflow for an increase in sustainability / speed
 
-assets is a folder with various images and data files for convenience. See Feature Subsampling for more.
+8. assets is a folder with various images and data files for convenience. See Feature Subsampling for more.
 
 ---
 
