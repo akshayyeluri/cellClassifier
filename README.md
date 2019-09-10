@@ -3,36 +3,36 @@ We have here a deep-learning model to classify cells based on single cell RNA (s
 
 ---
 ## Overview of Files
-Keras_tests.ipynb is the important file, showing fetching / processing the data, how to compile a keras model for training, the training and evaluation of the model, and various other parts of the workflow (This will be modularized / cleaned up later).
+1. workflow.ipynb is the important file, showing fetching / processing the data, how to compile a keras model for training, the training and evaluation of the model, and various other parts of the workflow (This will be modularized / cleaned up later).
 
-conv_net.h5 is a saved CNN keras model that performed well, getting about 80% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes. 
+2. conv_net.h5 is a saved CNN keras model that performed well, getting about 80% testing accuracy, which is exciting given that this is a multi-class classification problem with 10 classes. 
 
-multi_perceptron.h5 is a simpler, but more performant model that is just a simple feed-forward multi-layer perceptron. The important thing is that this model assumes the data has been preprocessed in a specific way (see feature subsampling section).
+3. multi_perceptron.h5 is a simpler, but more performant model that is just a simple feed-forward multi-layer perceptron. The important thing is that this model assumes the data has been preprocessed in a specific way (see feature subsampling section).
 
-finding_relevant_genes.ipynb is a testing notebook where the point is to identify what features are necessary to get good performance by zeroing out certain features, retraining, and seeing the change in accuracy.
+4. finding_relevant_genes.ipynb is a testing notebook where the point is to identify what features are necessary to get good performance by zeroing out certain features, retraining, and seeing the change in accuracy. This also includes chunks of code that do useful things like calculate the mutual information with class labels / Jensen shannon divergence for each gene, or find the correlation matrix for genes.
 
-make_models.py is a module with functions for generating keras models with related / similar architectures. This module makes hyperparameter optimization via grid-search convenient, since all desired hyperparameters for optimization can be passed as arguments to the functions in this module.
+5. make_models.py is a module with functions for generating keras models with related / similar architectures. This module makes hyperparameter optimization via grid-search convenient, since all desired hyperparameters for optimization can be passed as arguments to the functions in this module.
 
-utils.py is a module with some utilities I wrote ad-hoc in this workflow, the most important ones are the jensen_shannon and gene_divergence functions (more on those in the Feature subsampling section)/
+6. utils.py is a module with some utilities I wrote ad-hoc in this workflow, the most important ones are the jensen_shannon and gene_divergence functions (more on those in the Feature subsampling section)/
 
-low_level_tf_implementation is a work in progress, but will soon be the same architecture, implemented in tensorflow for an increase in sustainability / speed
+7. low_level_tf_implementation is a work in progress, but will soon be the same architecture, implemented in tensorflow for an increase in sustainability / speed
 
-assets is a folder with various images and data files for convenience. See Feature Subsampling for more.
+8. assets is a folder with various images and data files for convenience. See Feature Subsampling for more.
 
 ---
 
-# Feature subsampling via use of Jensen Shannon Divergence
+# Feature subsampling via use of Jensen Shannon Divergence / Mutual Information with Class Labels
 
 Jensen Shannon Divergence, or information radius, is an extension of KL divergence that is symmetric, and can also
 be extended to more than 2 distributions. The idea here is that the genes / features most diagnostic in classifying cells will likely be the genes where the distributions of counts within each cell class (so 1 distribution per class) diverge the most. Thus, we compute the divergence for each gene, and sort the genes by this metric. This has already been done, and we have a precomputed list of gene indices, sorted by their jensen shannon divergence, in assets/divergences.csv. We thus only take the top 1000 genes to use for classification. This reduction of number of features allows us to go from CNNs to a simple multi-layer perceptron model, and the performance actually drastically improves!
+
+What might be simpler intuitively is that the cross-class JS divergence is just the mutual information of gene counts with class labels for a given gene. Thus, the genes with the greatest JS divergence are the same genes that have the most mutual information with the class labels, hence motivating their importance.
 
 ## New Multi-layer perceptron summary
 ```
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
 =================================================================
-flatten_1 (Flatten)          (None, 1000)              0         
-_________________________________________________________________
 dense_1 (Dense)              (None, 2048)              2050048   
 _________________________________________________________________
 dense_2 (Dense)              (None, 512)               1049088   
@@ -44,6 +44,7 @@ dense_3 (Dense)              (None, 10)                5130
 Total params: 3,104,266
 Trainable params: 3,104,266
 Non-trainable params: 0
+_________________________________________________________________
 ```
 ## Performance Metrics
 Here we include an example of loading our model and evaluating a test set with it
