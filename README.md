@@ -28,7 +28,7 @@ predicted_labels = np.argmax(preds, 1)
 conf = utils.confusions(preds, labels)
 fig = utils.plot_confusions(conf)
 ```
-![all_confusions](assets/all_confusions.svg)
+![all_confusions](assets/all_confusions.png)
 
 ---
 ## Overview of Files
