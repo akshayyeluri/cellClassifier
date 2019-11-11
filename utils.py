@@ -7,6 +7,15 @@ import scipy.stats
 ######################################################################
 # Data wrangling / processing 
 ######################################################################
+def preprocess_labels(labels, NCLASS = 10):
+    """
+    Handle Matlab data's 1-indexed problem, convert to one hot format
+    """
+    # Handle 1-indexed to 0 indexed
+    labels = labels.squeeze().astype(int) - (1 if np.all(labels > 0) else 0)
+    # One hot the labels
+    labels = (np.arange(NCLASS) == labels[:, None]).astype(np.float32)
+    return labels
 
 def preprocess(data, colInds=None):
     """ 
