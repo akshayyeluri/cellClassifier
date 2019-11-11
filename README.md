@@ -2,6 +2,35 @@
 We have here a deep-learning model to classify cells based on single cell RNA (scRNA) sequencing data. More specifically, our model inputs a gene expression vector listing the counts of mRNA for each gene in a cell, and outputs one of 10 cell types it is predicted the cell belongs too.
 
 ---
+## Minimal Example
+```
+import numpy as np
+import utils
+import h5py
+from keras.models import load_model
+
+# Get the data
+f = h5py.File("data.mat")
+data_0, labels_0 = np.array(f['data']), np.array(f['labels'])
+f.close()
+
+# Preprocess the data
+colInds = np.load("assets/sorted_features.npy")[:1000]
+data = utils.preprocess(data_0, colInds)
+labels = utils.preprocess_labels(labels_0, NCLASS=10)
+
+# Load the model
+model = load_model("multi_perceptron.h5")
+
+# Calculate 
+preds = model.predict(data)
+predicted_labels = np.argmax(preds, 1)
+conf = utils.confusions(preds, labels)
+fig = utils.plot_confusions(conf)
+```
+![all_confusions](assets/all_confusions.png)
+
+---
 ## Overview of Files
 1. workflow.ipynb is the important file, showing fetching / processing the data, how to compile a keras model for training, the training and evaluation of the model, and various other parts of the workflow (This will be modularized / cleaned up later).
 
